@@ -9,21 +9,28 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
-var platform_browser_1 = require('@angular/platform-browser');
-var app_component_1 = require('./app.component');
-var weather_component_1 = require('./weather-widget/component/weather.component');
-var AppModule = (function () {
-    function AppModule() {
+var WeatherService = (function () {
+    function WeatherService() {
     }
-    AppModule = __decorate([
-        core_1.NgModule({
-            imports: [platform_browser_1.BrowserModule],
-            declarations: [app_component_1.AppComponent, weather_component_1.WeatherComponent],
-            bootstrap: [app_component_1.AppComponent]
-        }), 
+    WeatherService.prototype.getCurrentLocation = function () {
+        if (navigator.geolocation != null) {
+            navigator.geolocation.getCurrentPosition(function (pos) {
+                console.log("Position: ", pos.coords.latitude, ",", pos.coords.longitude);
+                return [pos.coords.latitude, pos.coords.longitude];
+            }, function (err) {
+                console.log(err);
+            });
+        }
+        else {
+            console.error("Geolocation is not available.");
+            return [0, 0];
+        }
+    };
+    WeatherService = __decorate([
+        core_1.Injectable(), 
         __metadata('design:paramtypes', [])
-    ], AppModule);
-    return AppModule;
+    ], WeatherService);
+    return WeatherService;
 }());
-exports.AppModule = AppModule;
-//# sourceMappingURL=app.module.js.map
+exports.WeatherService = WeatherService;
+//# sourceMappingURL=weather.service.js.map
