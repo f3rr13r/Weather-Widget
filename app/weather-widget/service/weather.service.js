@@ -9,26 +9,30 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
+var http_1 = require('@angular/http');
+var Observable_1 = require('rxjs/Observable');
+require('rxjs/add/operator/map');
+require('rxjs/add/operator/catch');
+var constants_1 = require('../constants/constants');
 var WeatherService = (function () {
-    function WeatherService() {
+    function WeatherService(jsonp) {
+        this.jsonp = jsonp;
+        this.latitude = 51.517230077032615;
+        this.longitude = -3.2531671183587507;
     }
-    WeatherService.prototype.getCurrentLocation = function () {
-        if (navigator.geolocation != null) {
-            navigator.geolocation.getCurrentPosition(function (pos) {
-                console.log("Position: ", pos.coords.latitude, ",", pos.coords.longitude);
-                return [pos.coords.latitude, pos.coords.longitude];
-            }, function (err) {
-                console.log(err);
-            });
-        }
-        else {
-            console.error("Geolocation is not available.");
-            return [0, 0];
-        }
+    WeatherService.prototype.getCurrentWeather = function () {
+        var url = constants_1.FORECAST_ROOT_URL + constants_1.FORECAST_API_KEY + "/" + this.latitude + "," + this.longitude;
+        var queryParams = "?callback=JSONP_CALLBACK";
+        return this.jsonp.get(url + queryParams)
+            .map(function (data) { return data.json(); })
+            .catch(function (err) {
+            console.error("Unable to get weather data -", err);
+            return Observable_1.Observable.throw(err.json());
+        });
     };
     WeatherService = __decorate([
         core_1.Injectable(), 
-        __metadata('design:paramtypes', [])
+        __metadata('design:paramtypes', [http_1.Jsonp])
     ], WeatherService);
     return WeatherService;
 }());
